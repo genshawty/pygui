@@ -1,0 +1,6 @@
+/__pycache__/
+/.qt_for_python/
+discord_hooks.py
+mainWindow.py
+tableView.py
+widgetClass.py

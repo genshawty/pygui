@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="images">
+    <file>trash.svg</file>
+    <file>icon.png</file>
+  </qresource>
+</RCC>

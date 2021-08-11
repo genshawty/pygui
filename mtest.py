@@ -17,7 +17,7 @@ from edit_task import Ui_Dialog
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
-            MainWindow.setObjectName(u"CenturionAIO")
+            MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1024, 768)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -80,9 +80,14 @@ class Ui_MainWindow(object):
         self.tabs_widget = QStackedWidget(self.centralwidget)
         self.tabs_widget.setObjectName(u"tabs_widget")
         self.tabs_widget.setGeometry(QRect(30, 100, 994, 668))
-        self.tabs_widget.setStyleSheet(u"QWidget {\n"
-"	background-color: transparent;\n"
-"}")
+        self.tabs_widget.setStyleSheet('''QComboBox {
+	background-color: transparent;
+	selection-background-color: transparent;
+	selection-color: black;
+}
+QLineEdit {
+	background-color: transparent;
+}''')
         self.task_creator_tab = QWidget()
         self.task_creator_tab.setObjectName(u"task_creator_tab")
         self.task_creator_tab.setStyleSheet(u"font-family: Rubik;")
@@ -143,7 +148,7 @@ class Ui_MainWindow(object):
         self.profile_frame.setFrameShape(QFrame.StyledPanel)
         self.profile_frame.setFrameShadow(QFrame.Raised)
         self.enter_profile_combo = QComboBox(self.profile_frame)
-        self.enter_profile_combo.addItem("")
+
         self.enter_profile_combo.setObjectName(u"enter_profile_combo")
         self.enter_profile_combo.setGeometry(QRect(0, 46, 141, 31))
         self.enter_profile_label = QLabel(self.profile_frame)
@@ -193,7 +198,7 @@ class Ui_MainWindow(object):
         self.enter_proxy_label.setObjectName(u"enter_proxy_label")
         self.enter_proxy_label.setGeometry(QRect(0, 0, 141, 31))
         self.enter_proxy_combo = QComboBox(self.proxy_frame_)
-        self.enter_proxy_combo.addItem("")
+
         self.enter_proxy_combo.setObjectName(u"enter_proxy_combo")
         self.enter_proxy_combo.setGeometry(QRect(0, 46, 141, 31))
 
@@ -271,32 +276,44 @@ class Ui_MainWindow(object):
         self.actions_collumn.setAlignment(Qt.AlignCenter)
         self.listWidget = QListWidget(self.tasks_frame)
         self.listWidget.setObjectName(u"listWidget")
-        self.listWidget.setGeometry(QRect(0, 60, 964, 500))
-        self.listWidget.setStyleSheet(u"QListWidget::item {\n"
-"	background-color: rgba(0, 0, 0, 0.2);\n"
-"	border: 0.1px solid transparent;\n"
-"	border-radius: 12px;\n"
-"}\n"
-"QListWidget {\n"
-"	border: 0px;\n"
-"}\n"
-"QLabel {\n"
-"	background-color: transparent;\n"
-"	font-size: 17px;\n"
-"	font-family: Rubik;\n"
-"	color: rgb(235, 235, 235);\n"
-"}\n"
-"QPushButton {\n"
-"	background-color: transparent;\n"
-"	border: 0px;\n"
-"	border-radius: 0px;\n"
-"}")
+        self.listWidget.setGeometry(QRect(10, 60, 944, 500))
+        self.listWidget.setStyleSheet('''QListWidget {
+	background-color: transparent;
+	border: 0px;
+}
+QListWidget::item {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: 0.1px solid transparent;
+	border-radius: 12px;
+}
+
+QLabel {
+	background-color: transparent;
+	font-size: 17px;
+	font-family: Rubik;
+	color: rgb(235, 235, 235);
+}
+QPushButton {
+	background-color: transparent;
+	border: 0px;
+	border-radius: 0px;
+}''')
+        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.listWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.listWidget.setSpacing(3)
         self.listWidget.raise_()
         self.collumns.raise_()
         self.tabs_widget.addWidget(self.tasks_tab)
         self.billing_tab = QWidget()
         self.billing_tab.setObjectName(u"billing_tab")
+        self.billing_tab.setStyleSheet(u"QLabel, QLineEdit, QPushButton {\n"
+"	font-family: Rubik;\n"
+"}\n"
+"QPushButton {\n"
+"	font-size: 20px;\n"
+"	border: 0.5px solid rgba(0, 0, 0, 0.3);\n"
+"	border-radius: 10px;\n"
+"}")
         self.billing_frame = QFrame(self.billing_tab)
         self.billing_frame.setObjectName(u"billing_frame")
         self.billing_frame.setGeometry(QRect(0, 0, 964, 571))
@@ -305,11 +322,44 @@ class Ui_MainWindow(object):
 "	border-radius: 10px;\n"
 "	background-color: rgba(0, 0, 0, 0.1);\n"
 "}\n"
-"QFrame, QLabel {\n"
-"	font-family: Rubik;\n"
+"QLabel, QLineEdit {\n"
+"	background-color: transparent;\n"
+"	color: grey;\n"
+"}\n"
+"QLabel {\n"
+"	font-size:23px;\n"
+"	border: 0px;\n"
+"	border-radius: 0px;\n"
+"	border-bottom: 1px solid grey;\n"
+"}\n"
+"QLineEdit {\n"
+"	font-size: 21px;\n"
+"	border: 0.5px solid rgba(0, 0, 0, 0.5);\n"
+"	border-radius: 10px;\n"
 "}")
         self.billing_frame.setFrameShape(QFrame.StyledPanel)
         self.billing_frame.setFrameShadow(QFrame.Raised)
+        self.profile_name_label = QLabel(self.billing_frame)
+        self.profile_name_label.setObjectName(u"profile_name_label")
+        self.profile_name_label.setGeometry(QRect(10, 15, 211, 31))
+        self.profile_name_input = QLineEdit(self.billing_frame)
+        self.profile_name_input.setObjectName(u"profile_name_input")
+        self.profile_name_input.setGeometry(QRect(10, 60, 944, 35))
+        self.profile_name_input.setCursorPosition(0)
+        self.create_profile_button = QPushButton(self.billing_tab)
+        self.create_profile_button.setObjectName(u"create_profile_button")
+        self.create_profile_button.setGeometry(QRect(0, 590, 200, 60))
+        self.create_profile_button.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgba(0, 255, 0, 0.4);\n"
+"}\n"
+"QPushButton:pressed {\n"
+"	background-color: rgba(0, 255, 0, 0.2);\n"
+"}")
+        self.create_profile_indicator = QLabel(self.billing_tab)
+        self.create_profile_indicator.setObjectName(u"create_profile_indicator")
+        self.create_profile_indicator.setGeometry(QRect(0, 570, 141, 20))
+        self.create_profile_indicator.setStyleSheet(u"color: green;\n"
+"font-size: 17px;")
         self.tabs_widget.addWidget(self.billing_tab)
         self.settings_tab = QWidget()
         self.settings_tab.setObjectName(u"settings_tab")
@@ -353,10 +403,22 @@ class Ui_MainWindow(object):
         self.webhook_input.setObjectName(u"webhook_input")
         self.webhook_input.setGeometry(QRect(10, 60, 944, 35))
         self.webhook_input.setCursorPosition(0)
+        self.captcha_label = QLabel(self.settings_frame)
+        self.captcha_label.setObjectName(u"captcha_label")
+        self.captcha_label.setGeometry(QRect(10, 140, 211, 31))
+        self.captcha_input = QLineEdit(self.settings_frame)
+        self.captcha_input.setObjectName(u"captcha_input")
+        self.captcha_input.setGeometry(QRect(10, 180, 944, 35))
+        self.captcha_input.setCursorPosition(0)
         self.save_settings_button = QPushButton(self.settings_tab)
         self.save_settings_button.setObjectName(u"save_settings_button")
         self.save_settings_button.setGeometry(QRect(0, 600, 141, 41))
-        self.save_settings_button.setStyleSheet(u"background-color: rgba(0, 255, 0, 0.4);")
+        self.save_settings_button.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgba(0, 255, 0, 0.4);\n"
+"}\n"
+"QPushButton:pressed {\n"
+"	background-color: rgba(0, 255, 0, 0.2);\n"
+"}")
         self.save_indicator = QLabel(self.settings_tab)
         self.save_indicator.setObjectName(u"save_indicator")
         self.save_indicator.setGeometry(QRect(0, 576, 141, 20))
@@ -369,47 +431,160 @@ class Ui_MainWindow(object):
         self.tabs_widget.addWidget(self.settings_tab)
         self.proxies_tab = QWidget()
         self.proxies_tab.setObjectName(u"proxies_tab")
-        self.frame = QFrame(self.proxies_tab)
-        self.frame.setObjectName(u"frame")
-        self.frame.setGeometry(QRect(0, 0, 964, 571))
-        self.frame.setStyleSheet(u"QFrame {\n"
+        self.proxies_tab.setStyleSheet(u"QLabel, QLineEdit, QPushButton {\n"
+"	font-family: Rubik;\n"
+"}\n"
+"QPushButton {\n"
+"	font-size: 20px;\n"
+"	border: 0.5px solid rgba(0, 0, 0, 0.3);\n"
+"	border-radius: 10px;\n"
+"}")
+        self.proxies_frame = QFrame(self.proxies_tab)
+        self.proxies_frame.setObjectName(u"proxies_frame")
+        self.proxies_frame.setGeometry(QRect(0, 0, 964, 571))
+        self.proxies_frame.setStyleSheet(u"QFrame {\n"
 "	border: 1px solid rgba(0, 0, 0, 0.1);\n"
 "	border-radius: 10px;\n"
 "	background-color: rgba(0, 0, 0, 0.1);\n"
 "}\n"
-"QFrame, QLabel {\n"
-"	font-family: Rubik;\n"
+"QLabel, QLineEdit {\n"
+"	background-color: transparent;\n"
+"	color: grey;\n"
+"}\n"
+"QLabel {\n"
+"	font-size:23px;\n"
+"	border: 0px;\n"
+"	border-radius: 0px;\n"
+"	border-bottom: 1px solid grey;\n"
+"}\n"
+"QLineEdit {\n"
+"	font-size: 21px;\n"
+"	border: 0.5px solid rgba(0, 0, 0, 0.5);\n"
+"	border-radius: 10px;\n"
 "}")
-        self.tasks_num = 0
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.proxies_frame.setFrameShape(QFrame.StyledPanel)
+        self.proxies_frame.setFrameShadow(QFrame.Raised)
+        self.proxy_label = QLabel(self.proxies_frame)
+        self.proxy_label.setObjectName(u"proxy_label")
+        self.proxy_label.setGeometry(QRect(10, 15, 211, 31))
+        self.proxy_input = QLineEdit(self.proxies_frame)
+        self.proxy_input.setObjectName(u"proxy_input")
+        self.proxy_input.setGeometry(QRect(10, 60, 944, 35))
+        self.proxy_input.setCursorPosition(0)
+        self.create_proxy_button = QPushButton(self.proxies_tab)
+        self.create_proxy_button.setObjectName(u"create_proxy_button")
+        self.create_proxy_button.setGeometry(QRect(0, 590, 200, 60))
+        self.create_proxy_button.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgba(0, 255, 0, 0.4);\n"
+"}\n"
+"QPushButton:pressed {\n"
+"	background-color: rgba(0, 255, 0, 0.2);\n"
+"}")
+        self.create_proxy_indicator = QLineEdit(self.proxies_tab)
+        self.create_proxy_indicator.setObjectName(u"create_proxy_indicator")
+        self.create_proxy_indicator.setGeometry(QRect(0, 570, 141, 21))
+        self.create_proxy_indicator.setStyleSheet(u"color: green;\n"
+"font-size: 17px;\n"
+"border: 0px;")
         self.tabs_widget.addWidget(self.proxies_tab)
+        MainWindow.setCentralWidget(self.centralwidget)
 
+        self.retranslateUi(MainWindow)
+
+        self.tabs_widget.setCurrentIndex(1)
         self.pos = MainWindow.pos()
-        self.tasks_container = dict()
         MainWindow.setCentralWidget(self.centralwidget)
         MainWindow.setWindowFlags(Qt.FramelessWindowHint)
         MainWindow.setAttribute(Qt.WA_TranslucentBackground)
         self.exit_button.clicked.connect(lambda: MainWindow.close())
         self.hide_button.clicked.connect(lambda: MainWindow.showMinimized())
-        self.task_creator.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(0))
-        self.tasks.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(1))
-        self.billing.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(2))
-        self.proxies.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(4))
-        self.settings.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(3))
-
-        
-        self.add_taskBtn.clicked.connect(self.add_task)
-
-        self.save_indicator.hide()
-
-        self.retranslateUi(MainWindow)
-
-        self.tabs_widget.setCurrentIndex(0)
-
+        self.app_core()
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.icon.setText("")
+        self.task_creator.setText(QCoreApplication.translate("MainWindow", u"Task Creator", None))
+        self.tasks.setText(QCoreApplication.translate("MainWindow", u"Tasks", None))
+        self.billing.setText(QCoreApplication.translate("MainWindow", u"Billing", None))
+        self.proxies.setText(QCoreApplication.translate("MainWindow", u"Proxies", None))
+        self.settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.exit_button.setText(QCoreApplication.translate("MainWindow", u"X", None))
+        self.hide_button.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        self.enter_site_label.setText(QCoreApplication.translate("MainWindow", u"Site:", None))
+        self.enter_site_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Svyaznoy", None))
+
+        self.enter_profile_label.setText(QCoreApplication.translate("MainWindow", u"Profile:", None))
+        self.enter_product_label.setText(QCoreApplication.translate("MainWindow", u"Product:", None))
+        self.enter_size_label.setText(QCoreApplication.translate("MainWindow", u"Size:", None))
+        self.enter_size_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"No Size", None))
+
+        self.enter_proxy_label.setText(QCoreApplication.translate("MainWindow", u"Proxy:", None))
+
+        self.add_taskBtn.setText(QCoreApplication.translate("MainWindow", u"Add Task", None))
+        self.num_collumn.setText(QCoreApplication.translate("MainWindow", u"\u2116", None))
+        self.site_collumn.setText(QCoreApplication.translate("MainWindow", u"Site", None))
+        self.profile_collumn.setText(QCoreApplication.translate("MainWindow", u"Profile", None))
+        self.product_collumn.setText(QCoreApplication.translate("MainWindow", u"Product", None))
+        self.size_collumn.setText(QCoreApplication.translate("MainWindow", u"Size", None))
+        self.proxy_collumn.setText(QCoreApplication.translate("MainWindow", u"Proxy", None))
+        self.status_collumn.setText(QCoreApplication.translate("MainWindow", u"Status", None))
+        self.actions_collumn.setText(QCoreApplication.translate("MainWindow", u"Actions", None))
+        self.profile_name_label.setText(QCoreApplication.translate("MainWindow", u"Profile name:", None))
+        self.create_profile_button.setText(QCoreApplication.translate("MainWindow", u"Create Profile", None))
+        self.create_profile_indicator.setText(QCoreApplication.translate("MainWindow", u"created!", None))
+        self.webhook_label.setText(QCoreApplication.translate("MainWindow", u"Discord Webhook:", None))
+        self.captcha_label.setText(QCoreApplication.translate("MainWindow", u"2captcha key:", None))
+        self.save_settings_button.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.save_indicator.setText(QCoreApplication.translate("MainWindow", u"saved!", None))
+        self.test_webhook_button.setText(QCoreApplication.translate("MainWindow", u"Test Webhook", None))
+        self.proxy_label.setText(QCoreApplication.translate("MainWindow", u"Proxy: ", None))
+        self.create_proxy_button.setText(QCoreApplication.translate("MainWindow", u"Add Proxy", None))
+        self.create_proxy_indicator.setText(QCoreApplication.translate("MainWindow", u"added!", None))
+
+    def app_core(self):
+        # self.pos = MainWindow.pos()
+        # MainWindow.setCentralWidget(self.centralwidget)
+        # MainWindow.setWindowFlags(Qt.FramelessWindowHint)
+        # MainWindow.setAttribute(Qt.WA_TranslucentBackground)
+        # self.exit_button.clicked.connect(lambda: MainWindow.close())
+        # self.hide_button.clicked.connect(lambda: MainWindow.showMinimized())
+        self.tasks_num = 0
+        self.set_containers()
+        self.task_creator.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(0))
+        self.tasks.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(1))
+
+        self.billing.clicked.connect(self.show_profiles_tab)
+        self.proxies.clicked.connect(self.show_proxy_tab)
+        self.settings.clicked.connect(self.show_settings_tab)
+        
+        self.save_settings_button.clicked.connect(self.save_settings)
+        self.create_proxy_button.clicked.connect(self.add_proxy)
+        self.create_profile_button.clicked.connect(self.add_profile)
+        self.add_taskBtn.clicked.connect(self.add_task)
+
+    def add_proxy(self):
+        data = dict()
+        
+        self.proxies_container[self.proxy_input.text()] = data
+        self.update_comboboxes('proxy')
+        
+        self.create_proxy_indicator.show()
+
+    def add_profile(self):
+        data = dict()
+
+        self.profiles_container[self.profile_name_input.text()] = data  
+        self.update_comboboxes('profiles')
+
+        self.create_profile_indicator.show()
+    
+    def save_settings(self):
+        self.settings_container['webhook'] = self.webhook_input.text()
+        self.settings_container['2captcha'] = self.captcha_input.text()
+        self.save_indicator.show()
 
     def add_task(self):
         data = dict()
@@ -432,7 +607,7 @@ class Ui_MainWindow(object):
         self.tasks_container[self.tasks_num] = data
 
         del data
-    
+
     def deleteTask(self, item):
         row = self.listWidget.indexFromItem(item).row()
         item = self.listWidget.takeItem(row)
@@ -453,43 +628,38 @@ class Ui_MainWindow(object):
         else:
             print('cancelled')
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.icon.setText("")
-        self.task_creator.setText(QCoreApplication.translate("MainWindow", u"Task Creator", None))
-        self.tasks.setText(QCoreApplication.translate("MainWindow", u"Tasks", None))
-        self.billing.setText(QCoreApplication.translate("MainWindow", u"Billing", None))
-        self.proxies.setText(QCoreApplication.translate("MainWindow", u"Proxies", None))
-        self.settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
-        self.exit_button.setText(QCoreApplication.translate("MainWindow", u"X", None))
-        self.hide_button.setText(QCoreApplication.translate("MainWindow", u"-", None))
-        self.enter_site_label.setText(QCoreApplication.translate("MainWindow", u"Site:", None))
-        self.enter_site_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Svyaznoy", None))
+    def update_comboboxes(self, tab):
+        if tab == 'profiles':
+            names = list(self.profiles_container.keys())
+            self.enter_profile_combo.addItem("")
+            self.enter_profile_combo.setItemText(len(names) - 1, QCoreApplication.translate("MainWindow", names[-1], None))
+        elif tab == 'proxy':
+            names = list(self.proxies_container.keys())
+            self.enter_proxy_combo.addItem("")
+            self.enter_proxy_combo.setItemText(len(names) - 1, QCoreApplication.translate("MainWindow", names[-1], None))
+        # self.enter_profile_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Fantic RU", None))
+        # self.enter_proxy_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Local", None))
+        # self.enter_proxy_combo.addItem("")
 
-        self.enter_profile_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Fantic RU", None))
 
-        self.enter_profile_label.setText(QCoreApplication.translate("MainWindow", u"Profile:", None))
-        self.enter_product_label.setText(QCoreApplication.translate("MainWindow", u"Product:", None))
-        self.enter_size_label.setText(QCoreApplication.translate("MainWindow", u"Size:", None))
-        self.enter_size_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"No Size", None))
+    def set_containers(self):
+        self.tasks_container = dict()
+        self.profiles_container = dict()
+        self.proxies_container = dict()
+        self.settings_container = dict()
+        # FIXME: добавить загрузку данных из реестра
 
-        self.enter_proxy_label.setText(QCoreApplication.translate("MainWindow", u"Proxy:", None))
-        self.enter_proxy_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Local", None))
+    def show_settings_tab(self):
+        self.save_indicator.hide()
+        self.tabs_widget.setCurrentIndex(3)
 
-        self.add_taskBtn.setText(QCoreApplication.translate("MainWindow", u"Add Task", None))
-        self.num_collumn.setText(QCoreApplication.translate("MainWindow", u"\u2116", None))
-        self.site_collumn.setText(QCoreApplication.translate("MainWindow", u"Site", None))
-        self.profile_collumn.setText(QCoreApplication.translate("MainWindow", u"Profile", None))
-        self.product_collumn.setText(QCoreApplication.translate("MainWindow", u"Product", None))
-        self.size_collumn.setText(QCoreApplication.translate("MainWindow", u"Size", None))
-        self.proxy_collumn.setText(QCoreApplication.translate("MainWindow", u"Proxy", None))
-        self.status_collumn.setText(QCoreApplication.translate("MainWindow", u"Status", None))
-        self.actions_collumn.setText(QCoreApplication.translate("MainWindow", u"Actions", None))
-        self.webhook_label.setText(QCoreApplication.translate("MainWindow", u"Discord Webhook:", None))
-        self.save_settings_button.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.save_indicator.setText(QCoreApplication.translate("MainWindow", u"saved!", None))
-        self.test_webhook_button.setText(QCoreApplication.translate("MainWindow", u"Test Webhook", None))
-    # retranslateUi
+    def show_proxy_tab(self):
+        self.create_proxy_indicator.hide()
+        self.tabs_widget.setCurrentIndex(4)
+        
+    def show_profiles_tab(self):
+        self.create_profile_indicator.hide()
+        self.tabs_widget.setCurrentIndex(2)
 
 class taskWidget(QWidget):
     itemDeleted = Signal(QListWidgetItem)

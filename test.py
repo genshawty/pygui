@@ -1,42 +1,72 @@
-self.tasks_num = 0
-MainWindow.setWindowFlags(Qt.FramelessWindowHint)
-MainWindow.setAttribute(Qt.WA_TranslucentBackground)
-self.exit_button.clicked.connect(lambda: MainWindow.close())
-self.hide_button.clicked.connect(lambda: MainWindow.showMinimized())
+self.pos = MainWindow.pos()
+        self.tasks_container = dict()
+        MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setWindowFlags(Qt.FramelessWindowHint)
+        MainWindow.setAttribute(Qt.WA_TranslucentBackground)
+        self.exit_button.clicked.connect(lambda: MainWindow.close())
+        self.hide_button.clicked.connect(lambda: MainWindow.showMinimized())
+        self.task_creator.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(0))
+        self.tasks.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(1))
+        self.billing.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(2))
+        self.proxies.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(4))
+        self.settings.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(3))
 
-self.task_creator.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(0))
-self.tasks.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(1))
-self.billing.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(2))
-self.proxies.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(4))
-self.settings.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(3))
-self.add_taskBtn.clicked.connect(self.add_task)
+        
+        self.add_taskBtn.clicked.connect(self.add_task)
 
-self.save_indicator.hide()
+        self.save_indicator.hide()
+
+        self.retranslateUi(MainWindow)
+
+        self.tabs_widget.setCurrentIndex(0)
+
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
 
 def add_task(self):
-        data = dict()
-        self.tasks_num += 1
-        data['num'] = self.tasks_num
-        data['site'] = self.enter_site_combo.currentText()
-        data['profile'] = self.enter_profile_combo.currentText()
-        data['product'] = self.enter_product_input.text()
-        data['size'] = self.enter_size_combo.currentText()
-        data['proxy'] = self.enter_proxy_combo.currentText()
-        item = QListWidgetItem(self.listWidget)
-        item.setSizeHint(QSize(944, 40))
-        widget = taskWidget(item, data)
-        widget.itemDeleted.connect(self.deleteTask)
-        # Binding delete signal
-        self.listWidget.setItemWidget(item, widget)
-        del data
-    
+    data = dict()
+    self.tasks_num += 1
+    data['num'] = str(self.tasks_num)
+    data['site'] = self.enter_site_combo.currentText()
+    data['profile'] = self.enter_profile_combo.currentText()
+    data['product'] = self.enter_product_input.text()
+    data['size'] = self.enter_size_combo.currentText()
+    data['proxy'] = self.enter_proxy_combo.currentText()
+    item = QListWidgetItem(self.listWidget)
+    item.setSizeHint(QSize(944, 40))
+    data['item'] = item
+    widget = taskWidget(item, data)
+    widget.itemDeleted.connect(self.deleteTask)
+    widget.itemEdited.connect(self.editTask)
+    # Binding delete signal
+    self.listWidget.setItemWidget(item, widget)
+
+    self.tasks_container[self.tasks_num] = data
+
+    del data
+
 def deleteTask(self, item):
     row = self.listWidget.indexFromItem(item).row()
     item = self.listWidget.takeItem(row)
     self.listWidget.removeItemWidget(item)
     del item
 
-cclass taskWidget(QWidget):
+def editTask(self, item):
+    print(item)
+    for t in self.tasks_container:
+        if self.tasks_container[t]['item'] == item:
+            break
+    
+    dialog = Ui_Dialog(self.tasks_container[t])
+    center = QScreen.availableGeometry(QApplication.primaryScreen()).center()
+    dialog.move(center.x()-400, center.y()-275)
+    if dialog.exec() == QDialog.Accepted:
+        print('edited')
+    else:
+        print('cancelled')
+
+class taskWidget(QWidget):
     itemDeleted = Signal(QListWidgetItem)
 
     def __init__(self, item, data, *args, **kwargs):

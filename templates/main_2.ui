@@ -186,7 +186,7 @@ font-size: 50px;</string>
 }</string>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="task_creator_tab">
      <property name="styleSheet">

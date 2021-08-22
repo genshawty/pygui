@@ -216,7 +216,7 @@ font-size: 20px;</string>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <widget class="QComboBox" name="enter_profile_combo_4">
+       <widget class="QComboBox" name="enter_profile_combo">
         <property name="geometry">
          <rect>
           <x>330</x>

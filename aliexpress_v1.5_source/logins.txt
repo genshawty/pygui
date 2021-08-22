@@ -1,0 +1,3 @@
+9858848212:zaxar1212AAAA:telephone
+номер телефона без (7):пароль:telephone
+почта:пароль:email

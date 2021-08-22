@@ -1,10 +1,12 @@
-import sys
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 class Ui_Dialog(QDialog):
-    def __init__(self, data):
+    itemEdit = Signal(dict)
+    def __init__(self, data, profiles, proxies):
+        self.profiles_container = profiles
+        self.proxies_container = proxies
         self.data = data
         super(Ui_Dialog, self).__init__()
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -18,6 +20,11 @@ class Ui_Dialog(QDialog):
 QFrame#main {
 	border: 2px solid grey;
 	border-radius: 10px;
+}
+QComboBox {
+	background-color: transparent;
+	selection-background-color: transparent;
+	selection-color: black;
 }''')
         self.main = QFrame(self)
         self.main.setObjectName(u"main")
@@ -78,11 +85,11 @@ QFrame#main {
         self.frame_2.setMaximumSize(QSize(795, 60))
         self.frame_2.setFrameShape(QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Raised)
-        self.enter_site_combo_4 = QComboBox(self.frame_2)
-        self.enter_site_combo_4.addItem("")
-        self.enter_site_combo_4.setObjectName(u"enter_site_combo_4")
-        self.enter_site_combo_4.setGeometry(QRect(330, 30, 141, 24))
-        self.enter_site_combo_4.setFrame(False)
+        self.enter_site_combo = QComboBox(self.frame_2)
+        self.enter_site_combo.addItem("")
+        self.enter_site_combo.setObjectName(u"enter_site_combo")
+        self.enter_site_combo.setGeometry(QRect(330, 30, 141, 24))
+        self.enter_site_combo.setFrame(False)
         self.enter_site_label_4 = QLabel(self.frame_2)
         self.enter_site_label_4.setObjectName(u"enter_site_label_4")
         self.enter_site_label_4.setGeometry(QRect(330, 0, 141, 31))
@@ -96,10 +103,10 @@ QFrame#main {
         self.frame_3.setMaximumSize(QSize(795, 60))
         self.frame_3.setFrameShape(QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Raised)
-        self.enter_profile_combo_4 = QComboBox(self.frame_3)
-        self.enter_profile_combo_4.addItem("")
-        self.enter_profile_combo_4.setObjectName(u"enter_profile_combo_4")
-        self.enter_profile_combo_4.setGeometry(QRect(330, 30, 141, 24))
+        self.enter_profile_combo = QComboBox(self.frame_3)
+
+        self.enter_profile_combo.setObjectName(u"enter_profile_combo")
+        self.enter_profile_combo.setGeometry(QRect(330, 30, 141, 24))
         self.enter_profile_label_4 = QLabel(self.frame_3)
         self.enter_profile_label_4.setObjectName(u"enter_profile_label_4")
         self.enter_profile_label_4.setGeometry(QRect(330, 0, 141, 31))
@@ -117,10 +124,10 @@ QFrame#main {
         self.enter_product_label_4.setObjectName(u"enter_product_label_4")
         self.enter_product_label_4.setGeometry(QRect(330, 0, 141, 31))
         self.enter_product_label_4.setAlignment(Qt.AlignCenter)
-        self.enter_product_input_4 = QLineEdit(self.frame_4)
-        self.enter_product_input_4.setObjectName(u"enter_product_input_4")
-        self.enter_product_input_4.setGeometry(QRect(120, 30, 591, 24))
-        self.enter_product_input_4.setStyleSheet(u"QLineEdit {\n"
+        self.enter_product_input = QLineEdit(self.frame_4)
+        self.enter_product_input.setObjectName(u"enter_product_input")
+        self.enter_product_input.setGeometry(QRect(120, 30, 591, 24))
+        self.enter_product_input.setStyleSheet(u"QLineEdit {\n"
 "	color: black;\n"
 "}")
 
@@ -132,10 +139,10 @@ QFrame#main {
         self.frame_5.setMaximumSize(QSize(795, 60))
         self.frame_5.setFrameShape(QFrame.StyledPanel)
         self.frame_5.setFrameShadow(QFrame.Raised)
-        self.enter_size_combo_4 = QComboBox(self.frame_5)
-        self.enter_size_combo_4.addItem("")
-        self.enter_size_combo_4.setObjectName(u"enter_size_combo_4")
-        self.enter_size_combo_4.setGeometry(QRect(330, 30, 141, 24))
+        self.enter_size_combo = QComboBox(self.frame_5)
+        self.enter_size_combo.addItem("")
+        self.enter_size_combo.setObjectName(u"enter_size_combo")
+        self.enter_size_combo.setGeometry(QRect(330, 30, 141, 24))
         self.enter_size_label_4 = QLabel(self.frame_5)
         self.enter_size_label_4.setObjectName(u"enter_size_label_4")
         self.enter_size_label_4.setGeometry(QRect(330, 0, 141, 31))
@@ -153,19 +160,43 @@ QFrame#main {
         self.enter_proxy_label_4.setObjectName(u"enter_proxy_label_4")
         self.enter_proxy_label_4.setGeometry(QRect(330, 0, 141, 31))
         self.enter_proxy_label_4.setAlignment(Qt.AlignCenter)
-        self.enter_proxy_combo_4 = QComboBox(self.frame_6)
-        self.enter_proxy_combo_4.addItem("")
-        self.enter_proxy_combo_4.setObjectName(u"enter_proxy_combo_4")
-        self.enter_proxy_combo_4.setGeometry(QRect(330, 30, 141, 24))
+        self.enter_proxy_combo = QComboBox(self.frame_6)
+
+        self.enter_proxy_combo.setObjectName(u"enter_proxy_combo")
+        self.enter_proxy_combo.setGeometry(QRect(330, 30, 141, 24))
 
         self.verticalLayout.addWidget(self.frame_6)
 
         self.exit_button.clicked.connect(self.close)
-        self.save_taskBtn.clicked.connect(self.accept)
+        self.save_taskBtn.clicked.connect(self.save_task)
         self.retranslateUi()
+        self.update_comboboxes()
 
         QMetaObject.connectSlotsByName(self)
     # setupUi
+
+    def update_comboboxes(self):  
+        names = list(self.profiles_container.keys())
+        for i in range(self.enter_profile_combo.count()):
+            self.enter_profile_combo.removeItem(0)
+            
+        for i in range(len(names)):
+            self.enter_profile_combo.addItem(names[i])
+    
+        names = list(self.proxies_container.keys())
+        for i in range(self.enter_proxy_combo.count()):
+            self.enter_proxy_combo.removeItem(0)
+        for i in range(len(names)):
+            self.enter_proxy_combo.addItem(names[i])
+
+    def save_task(self):
+        self.data['site'] = self.enter_site_combo.currentText()
+        self.data['profile'] = self.enter_profile_combo.currentText()
+        self.data['product'] = self.enter_product_input.text()
+        self.data['size'] = self.enter_size_combo.currentText()
+        self.data['proxy'] = self.enter_proxy_combo.currentText()
+        self.itemEdit.emit(self.data)
+        self.accept()
 
     def retranslateUi(self):
         # устанаваливает текст исходя из значений, переданных в self.data
@@ -173,15 +204,15 @@ QFrame#main {
         self.save_taskBtn.setText(QCoreApplication.translate("Dialog", u"Save", None))
         self.header.setText(QCoreApplication.translate("Dialog", u"Edit Task #" + str(self.data['num']), None))
         self.exit_button.setText(QCoreApplication.translate("Dialog", u"X", None))
-        self.enter_site_combo_4.setItemText(0, QCoreApplication.translate("Dialog", u"Svyaznoy", None))
+        self.enter_site_combo.setItemText(0, QCoreApplication.translate("Dialog", u"Svyaznoy", None))
 
         self.enter_site_label_4.setText(QCoreApplication.translate("Dialog", u"Site:", None))
-        self.enter_profile_combo_4.setItemText(0, QCoreApplication.translate("Dialog", u"Fantic RU", None))
+
 
         self.enter_profile_label_4.setText(QCoreApplication.translate("Dialog", u"Profile:", None))
         self.enter_product_label_4.setText(QCoreApplication.translate("Dialog", u"Product:", None))
-        self.enter_size_combo_4.setItemText(0, QCoreApplication.translate("Dialog", u"No Size", None))
+        self.enter_size_combo.setItemText(0, QCoreApplication.translate("Dialog", u"No Size", None))
 
         self.enter_size_label_4.setText(QCoreApplication.translate("Dialog", u"Size:", None))
         self.enter_proxy_label_4.setText(QCoreApplication.translate("Dialog", u"Proxy:", None))
-        self.enter_proxy_combo_4.setItemText(0, QCoreApplication.translate("Dialog", u"Local", None))
+

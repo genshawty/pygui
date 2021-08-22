@@ -13,6 +13,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 import sys
 from edit_task import Ui_Dialog
+from tools import Aliexpress
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -136,6 +137,7 @@ QLineEdit {
         self.enter_site_label.setObjectName(u"enter_site_label")
         self.enter_site_label.setGeometry(QRect(0, -5, 141, 31))
         self.enter_site_combo = QComboBox(self.site_frame)
+        self.enter_site_combo.addItem("")
         self.enter_site_combo.addItem("")
         self.enter_site_combo.setObjectName(u"enter_site_combo")
         self.enter_site_combo.setGeometry(QRect(0, 46, 141, 31))
@@ -515,6 +517,7 @@ QPushButton {
         self.hide_button.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.enter_site_label.setText(QCoreApplication.translate("MainWindow", u"Site:", None))
         self.enter_site_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Svyaznoy", None))
+        self.enter_site_combo.setItemText(1, QCoreApplication.translate("MainWindow", u"Aliexpress", None))
 
         self.enter_profile_label.setText(QCoreApplication.translate("MainWindow", u"Profile:", None))
         self.enter_product_label.setText(QCoreApplication.translate("MainWindow", u"Product:", None))
@@ -553,6 +556,8 @@ QPushButton {
         # self.hide_button.clicked.connect(lambda: MainWindow.showMinimized())
         self.tasks_num = 0
         self.set_containers()
+        self.update_comboboxes('proxy')
+        self.update_comboboxes('profiles')
         self.task_creator.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(0))
         self.tasks.clicked.connect(lambda: self.tabs_widget.setCurrentIndex(1))
 
@@ -564,6 +569,36 @@ QPushButton {
         self.create_proxy_button.clicked.connect(self.add_proxy)
         self.create_profile_button.clicked.connect(self.add_profile)
         self.add_taskBtn.clicked.connect(self.add_task)
+
+    def start_task(self, item):
+        for i in self.tasks_container:
+            if self.tasks_container[i]['item'] == item:
+                data = self.tasks_container[i]
+                break
+        if data['site'] == 'Aliexpress':
+            self.active_tasks.append((item, Aliexpress(data, self.settings_container)))
+        else:
+            print(data['site'])
+        self.active_tasks[-1][1].send_status.connect(lambda info: self.set_status(info, i))    
+        self.active_tasks[-1][1].stop_task.connect(self.stop_task) 
+        self.active_tasks[-1][1].start()
+    
+    def set_status(self, info: dict, i):
+        data = self.tasks_container[i]
+        data['status'] = info['status']
+        data['color'] = info['color']
+        self.change_data(i, data)
+    
+    def stop_task(self, item):
+        for i in self.tasks_container:
+            if self.tasks_container[i]['item'] == item:
+                break
+        for j in range(len(self.active_tasks)):
+            if self.active_tasks[j] == item:
+                break
+        self.active_tasks.pop(j)
+        info = {'status': 'stopped', 'color': 'red'}
+        self.set_status(info, i)
 
     def add_proxy(self):
         data = dict()
@@ -598,9 +633,13 @@ QPushButton {
         item = QListWidgetItem(self.listWidget)
         item.setSizeHint(QSize(944, 40))
         data['item'] = item
+        data['color'] = 'red'
+        data['status'] = 'stopped'
         widget = taskWidget(item, data)
         widget.itemDeleted.connect(self.deleteTask)
         widget.itemEdited.connect(self.editTask)
+        widget.itemStarted.connect(self.start_task)
+        widget.itemStopped.connect(self.stop_task)
         # Binding delete signal
         self.listWidget.setItemWidget(item, widget)
 
@@ -609,18 +648,20 @@ QPushButton {
         del data
 
     def deleteTask(self, item):
+        self.tasks_num -= 1
         row = self.listWidget.indexFromItem(item).row()
         item = self.listWidget.takeItem(row)
         self.listWidget.removeItemWidget(item)
         del item
 
     def editTask(self, item):
-        print(item)
         for t in self.tasks_container:
             if self.tasks_container[t]['item'] == item:
                 break
         
-        dialog = Ui_Dialog(self.tasks_container[t])
+        dialog = Ui_Dialog(self.tasks_container[t], self.profiles_container, self.proxies_container)
+        dialog.itemEdit.connect(lambda data: self.change_data(t, data))
+        
         center = QScreen.availableGeometry(QApplication.primaryScreen()).center()
         dialog.move(center.x()-400, center.y()-275)
         if dialog.exec() == QDialog.Accepted:
@@ -628,25 +669,44 @@ QPushButton {
         else:
             print('cancelled')
 
+    def change_data(self, i, data):
+        row = self.listWidget.indexFromItem(data['item']).row()
+        item = self.listWidget.takeItem(row)
+        self.listWidget.removeItemWidget(item)
+        
+        self.listWidget.insertItem(row, data['item'])
+        widget = taskWidget(data['item'], data)
+        widget.itemDeleted.connect(self.deleteTask)
+        widget.itemEdited.connect(self.editTask)
+        widget.itemStarted.connect(self.start_task)
+        widget.itemStopped.connect(self.stop_task)
+        self.listWidget.setItemWidget(data['item'], widget)
+        self.tasks_container[i] = data
+        
+
     def update_comboboxes(self, tab):
         if tab == 'profiles':
             names = list(self.profiles_container.keys())
-            self.enter_profile_combo.addItem("")
-            self.enter_profile_combo.setItemText(len(names) - 1, QCoreApplication.translate("MainWindow", names[-1], None))
+            count = self.enter_profile_combo.count()
+            for i in range(count):
+                self.enter_profile_combo.removeItem(0)
+            for i in range(len(names)):
+                self.enter_profile_combo.addItem(names[i])
+                
         elif tab == 'proxy':
             names = list(self.proxies_container.keys())
-            self.enter_proxy_combo.addItem("")
-            self.enter_proxy_combo.setItemText(len(names) - 1, QCoreApplication.translate("MainWindow", names[-1], None))
-        # self.enter_profile_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Fantic RU", None))
-        # self.enter_proxy_combo.setItemText(0, QCoreApplication.translate("MainWindow", u"Local", None))
-        # self.enter_proxy_combo.addItem("")
+            for i in range(self.enter_proxy_combo.count()):
+                self.enter_proxy_combo.removeItem(0)
+            for i in range(len(names)):
+                self.enter_proxy_combo.addItem(names[i])
 
 
     def set_containers(self):
         self.tasks_container = dict()
-        self.profiles_container = dict()
-        self.proxies_container = dict()
+        self.profiles_container = {'No profile': {}}
+        self.proxies_container = {'Local': {}}
         self.settings_container = dict()
+        self.active_tasks = list()
         # FIXME: добавить загрузку данных из реестра
 
     def show_settings_tab(self):
@@ -664,6 +724,8 @@ QPushButton {
 class taskWidget(QWidget):
     itemDeleted = Signal(QListWidgetItem)
     itemEdited = Signal(QListWidgetItem)
+    itemStarted = Signal(QListWidgetItem)
+    itemStopped = Signal(QListWidgetItem)
     def __init__(self, item, data, *args, **kwargs):
         super(taskWidget, self).__init__(*args, **kwargs)
         self._item = item
@@ -717,6 +779,8 @@ class taskWidget(QWidget):
 
         self.delete_row.clicked.connect(self.deleteItem)
         self.edit_row.clicked.connect(self.editItem)
+        self.start_row.clicked.connect(self.startItem)
+        self.stop_row.clicked.connect(self.stopItem)
 
         icon4 = QIcon()
         icon4.addFile(u"img/trash.svg", QSize(), QIcon.Normal, QIcon.Off)
@@ -728,13 +792,20 @@ class taskWidget(QWidget):
         self.size_row.setText(QCoreApplication.translate("MainWindow", data['size'], None))
         self.profile_row.setText(QCoreApplication.translate("MainWindow", data['profile'], None))
         self.proxy_row.setText(QCoreApplication.translate("MainWindow", data['proxy'], None))
-        self.status_row.setText(QCoreApplication.translate("MainWindow", u"stopped", None))
+        self.status_row.setText(QCoreApplication.translate("MainWindow", data['status'], None))
+        self.status_row.setStyleSheet(f"color: {data['color']}")
 
     def deleteItem(self):
         self.itemDeleted.emit(self._item)
 
     def editItem(self):
         self.itemEdited.emit(self._item)
+
+    def startItem(self):
+        self.itemStarted.emit(self._item)
+
+    def stopItem(self):
+        self.itemStopped.emit(self._item)
 
 if __name__ == '__main__':
     # Create the Qt Application
